@@ -13,15 +13,16 @@ import java.time.Instant;
 @Slf4j
 public class LogAspect {
 
-    @Around("execution(* com.allwin.bootstrap.*.*(..))")
+    @Around("execution(* com.allwin.bootstrap.service.*.*(..))")
     public void log(ProceedingJoinPoint joinPoint) throws Throwable {
         Instant startTime = Instant.now();
-        log.info("Started {} at {}", joinPoint.getSignature().getName(), startTime);
+        log.info("Started {} at {}", joinPoint.getSignature().toShortString(), startTime);
 
         joinPoint.proceed();
 
         Instant finishedTime = Instant.now();
-        long diffInSeconds = finishedTime.getEpochSecond() - startTime.getEpochSecond();
-        log.info("Duration: {}\tCompleted {} at {}", diffInSeconds, joinPoint.getSignature().getName(), finishedTime);
+        long diffInMillis = finishedTime.toEpochMilli() - startTime.toEpochMilli();
+        log.info("Duration: [{} ms] \tCompleted {} at {}", diffInMillis, joinPoint.getSignature().toShortString(),
+                finishedTime);
     }
 }
