@@ -1,6 +1,5 @@
 package com.allwin.bootstrap.dal.dto;
 
-import com.allwin.bootstrap.dal.utils.ObjectConverter;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -23,9 +22,10 @@ public class IdempotentRequestDto implements Serializable {
     private String idempotentKey;
     @Column(name = "request")
     private String request;
-    @Column(name = "response", updatable = false)
-    @Convert(converter = ObjectConverter.class)
-    private Object response;
+    @Column(name = "response", columnDefinition = "BLOB")
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] response;
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;
@@ -36,7 +36,7 @@ public class IdempotentRequestDto implements Serializable {
     public IdempotentRequestDto() {
     }
 
-    public IdempotentRequestDto(String idempotentKey, String request, String response) {
+    public IdempotentRequestDto(String idempotentKey, String request, byte[] response) {
         this.idempotentKey = idempotentKey;
         this.request = request;
         this.response = response;

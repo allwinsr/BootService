@@ -13,6 +13,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.util.SerializationUtils;
 
 import java.time.Instant;
 
@@ -23,7 +24,7 @@ import java.time.Instant;
 public class IdempotentAspect {
 
     @Autowired
-    IdempotentService idempotentService;
+    private IdempotentService idempotentService;
 
     @Pointcut("@annotation(com.allwin.bootstrap.aspect.annotation.Idempotent)")
     private void processIdempotentRequest() {
@@ -36,7 +37,7 @@ public class IdempotentAspect {
         IdempotentRequestDto response = getRequest(joinPoint);
         if (response != null) {
             logFinishTime(joinPoint, startTime);
-            return response.getResponse();
+            return SerializationUtils.deserialize(response.getResponse());
         }
 
         Object result = joinPoint.proceed();
@@ -53,13 +54,6 @@ public class IdempotentAspect {
         return startTime;
     }
 
-    private static void logFinishTime(ProceedingJoinPoint joinPoint, Instant startTime) {
-        Instant finishedTime = Instant.now();
-        long diffInMillis = finishedTime.toEpochMilli() - startTime.toEpochMilli();
-        log.info("Duration: [{} ms] \t--> Completed Idempotent request{} at {}", diffInMillis,
-                joinPoint.getSignature().toShortString(), finishedTime);
-    }
-
     private IdempotentRequestDto getRequest(ProceedingJoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
         log.info("args : {}", args);
@@ -68,24 +62,30 @@ public class IdempotentAspect {
         return idempotentService.fetch(idempotentRequest.getIdempotenceKey());
     }
 
+    private static void logFinishTime(ProceedingJoinPoint joinPoint, Instant startTime) {
+        Instant finishedTime = Instant.now();
+        long diffInMillis = finishedTime.toEpochMilli() - startTime.toEpochMilli();
+        log.info("Duration: [{} ms] \t--> Completed Idempotent request{} at {}", diffInMillis,
+                joinPoint.getSignature().toShortString(), finishedTime);
+    }
+
     private void saveIdempotentRequest(ProceedingJoinPoint joinPoint, Object result) throws JsonProcessingException {
         Object[] args = joinPoint.getArgs();
         log.info("args : {}", args);
 
         IdempotentRequest idempotentRequest = (IdempotentRequest) joinPoint.getArgs()[0];
         IdempotentRequestDto request = new IdempotentRequestDto(idempotentRequest.getIdempotenceKey(),
-                JsonUtils.getJsonString(idempotentRequest.toString()), JsonUtils.getJsonString(result.toString()));
+                JsonUtils.getJsonString(idempotentRequest.toString()), SerializationUtils.serialize(result));
         idempotentService.save(request);
     }
 
-/*    @AfterThrowing("within(com.allwin.bootstrap)")
-    public void logExceptions(JoinPoint joinPoint) {
-        System.out.println("Exception thrown in " + joinPoint.toString());
-    }
+    /*    @AfterThrowing("within(com.allwin.bootstrap)")
+        public void logExceptions(JoinPoint joinPoint) {
+            System.out.println("Exception thrown in " + joinPoint.toString());
+        }
 
-    @AfterReturning(pointcut = "execution(* getName())", returning = "returnString")
-    public void getNameReturningAdvice(String returnString) {
-        System.out.println("getNameReturningAdvice executed. Returned String=" + returnString);
-    }*/
-
+        @AfterReturning(pointcut = "execution(* getName())", returning = "returnString")
+        public void getNameReturningAdvice(String returnString) {
+            System.out.println("getNameReturningAdvice executed. Returned String=" + returnString);
+        }*/
 }

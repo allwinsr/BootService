@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
 import java.io.IOException;
 
 //@Converter(autoApply = true)

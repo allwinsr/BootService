@@ -1,7 +1,7 @@
 package com.allwin.bootstrap.service.impl;
 
-import com.allwin.bootstrap.dal.mysql.IdempotentRepo;
 import com.allwin.bootstrap.dal.dto.IdempotentRequestDto;
+import com.allwin.bootstrap.dal.mysql.IdempotentRepo;
 import com.allwin.bootstrap.service.IdempotentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
