@@ -1,12 +1,14 @@
 package com.allwin.bootstrap.service;
 
+import com.allwin.bootstrap.service.dto.FindRequest;
 import com.allwin.bootstrap.dal.dto.SimpleDBRequest;
+import com.allwin.bootstrap.service.dto.SaveRequest;
 
 public interface SimpleDBService {
 
-    SimpleDBRequest persist(String name);
+    SimpleDBRequest persist(SaveRequest saveRequest);
 
-    SimpleDBRequest findById(Long id);
+    SimpleDBRequest findById(FindRequest findRequest);
 
     SimpleDBRequest update(Long id, String name);
 

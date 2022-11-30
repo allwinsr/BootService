@@ -22,6 +22,7 @@ public class SimpleDBRequest implements Serializable {
     @Version
     private Long version;
     private String name;
+    private String idempotenceKey;
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;
@@ -33,13 +34,19 @@ public class SimpleDBRequest implements Serializable {
         this.name = name;
     }
 
+    public SimpleDBRequest(String name, String idempotenceKey) {
+        this.name = name;
+        this.idempotenceKey = idempotenceKey;
+    }
+
     public SimpleDBRequest() {
 
     }
 
     @Override
     public String toString() {
-        return "SimpleDBRequest{" + "id=" + id + ", version=" + version + ", name='" + name + '\'' + ", createdAt=" +
-               createdAt + ", updatedAt=" + updatedAt + '}';
+        return "SimpleDBRequest{" + "id=" + id + ", version=" + version + ", name='" + name + '\'' +
+               ", idempotenceKey='" + idempotenceKey + '\'' + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt +
+               '}';
     }
 }

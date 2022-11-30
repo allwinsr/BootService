@@ -1,6 +1,9 @@
 package com.allwin.bootstrap.api.controller;
 
+import com.allwin.bootstrap.dal.dto.SimpleDBRequest;
+import com.allwin.bootstrap.service.dto.FindRequest;
 import com.allwin.bootstrap.service.SimpleDBService;
+import com.allwin.bootstrap.service.dto.SaveRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +20,16 @@ public class SimpleDBController extends BaseController {
     private SimpleDBService simpleDBService;
 
     @PostMapping("/save")
-    public ResponseEntity<Map<String, Object>> save(@RequestParam String name) {
-        log.info("Saving new object!!! {}", name);
-        return okCreatedResponseEntity(simpleDBService.persist(name));
+    public ResponseEntity<Map<String, Object>> save(@RequestBody SaveRequest saveRequest) {
+        log.info("Saving new object!!! {}", saveRequest);
+        SimpleDBRequest response = (SimpleDBRequest) simpleDBService.persist(saveRequest);
+        return okCreatedResponseEntity(response);
     }
 
     @GetMapping("/fetch")
-    public ResponseEntity<Map<String, Object>> fetch(@RequestParam Long id) {
-        log.info("Fetch the id : {}", id);
-        return okCreatedResponseEntity(simpleDBService.findById(id));
+    public ResponseEntity<Map<String, Object>> fetch(@RequestBody FindRequest request) {
+        log.info("Fetch the request : {}", request);
+        return okCreatedResponseEntity(simpleDBService.findById(request));
     }
 
     @PutMapping("/update")

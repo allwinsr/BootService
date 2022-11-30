@@ -1,8 +1,11 @@
 package com.allwin.bootstrap.service.impl;
 
+import com.allwin.bootstrap.aspect.Idempotent;
+import com.allwin.bootstrap.service.dto.FindRequest;
 import com.allwin.bootstrap.dal.dto.SimpleDBRequest;
 import com.allwin.bootstrap.dal.mysql.SimpleDBRepo;
 import com.allwin.bootstrap.service.SimpleDBService;
+import com.allwin.bootstrap.service.dto.SaveRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,16 +20,18 @@ public class SimpleDBServiceImpl implements SimpleDBService {
     private SimpleDBRepo simpleDBRepo;
 
     @Override
-    public SimpleDBRequest persist(String name) {
-        log.info("Persisting the message : {}", name);
-        SimpleDBRequest request = new SimpleDBRequest(name);
+    @Idempotent
+    public SimpleDBRequest persist(SaveRequest saveRequest) {
+        log.info("Persisting the message : {}", saveRequest);
+        SimpleDBRequest request = new SimpleDBRequest(saveRequest.getName(), saveRequest.getIdempotenceKey());
         return simpleDBRepo.saveAndFlush(request);
     }
 
     @Override
-    public SimpleDBRequest findById(Long id) {
-        log.info("Fetching the id {}", id);
-        return simpleDBRepo.findById(id).orElse(null);
+    public SimpleDBRequest findById(FindRequest findRequest) {
+        log.info("Fetching the id {} with getIdempotenceKey : {}", findRequest.getId(),
+                findRequest.getIdempotenceKey());
+        return simpleDBRepo.findById(findRequest.getId()).orElse(null);
     }
 
     @Override
