@@ -25,7 +25,7 @@ public class IdempotentAspect {
     @Autowired
     IdempotentService idempotentService;
 
-    @Pointcut("@annotation(com.allwin.bootstrap.aspect.Idempotent)")
+    @Pointcut("@annotation(com.allwin.bootstrap.aspect.annotation.Idempotent)")
     private void processIdempotentRequest() {
     }
 

@@ -1,4 +1,4 @@
-package com.allwin.bootstrap.aspect;
+package com.allwin.bootstrap.aspect.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

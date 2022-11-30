@@ -1,6 +1,6 @@
 package com.allwin.bootstrap.service.impl;
 
-import com.allwin.bootstrap.aspect.Idempotent;
+import com.allwin.bootstrap.aspect.annotation.Idempotent;
 import com.allwin.bootstrap.service.dto.FindRequest;
 import com.allwin.bootstrap.dal.dto.SimpleDBRequest;
 import com.allwin.bootstrap.dal.mysql.SimpleDBRepo;
